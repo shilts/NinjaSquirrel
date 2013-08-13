@@ -8,7 +8,7 @@ public class Shuriken : MonoBehaviour {
 
 	}
 
-	void OnCollision() {
+	void OnCollisionEnter() {
 		Destroy(gameObject);
 	}
 

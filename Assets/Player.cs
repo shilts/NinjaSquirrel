@@ -9,8 +9,8 @@ public class Player : MonoBehaviour {
 	private bool isGrounded = true;
 	private bool touchingWall = false;
 	private int throwForce = 2000;
-	private string facing = "R";
 
+	public string facing = "R";
 	public bool isDead = false;
 
 	// Spawnable objects
@@ -63,17 +63,23 @@ public class Player : MonoBehaviour {
 
 		} else if(touchingWall == true) {
 			if(Input.GetKey(KeyCode.LeftArrow)) {
+				newVel.y -= 0.05f;
+				rigidbody.velocity = newVel;
+
 				if(Input.GetKeyDown("space")) {
 					newVel.x += jumpForce;
-					newVel.y += jumpForce;
+					newVel.y = jumpForce;
 					rigidbody.velocity = newVel;
 					facing = "R";
 				}
 
 			} else if(Input.GetKey(KeyCode.RightArrow)) {
+				newVel.y -= 0.05f;
+				rigidbody.velocity = newVel;
+
 				if(Input.GetKeyDown("space")) {
 					newVel.x -= jumpForce;
-					newVel.y += jumpForce;
+					newVel.y = jumpForce;
 					rigidbody.velocity = newVel;
 					facing = "L";
 				}
@@ -81,13 +87,13 @@ public class Player : MonoBehaviour {
 		}
 
 		if(Input.GetKey(KeyCode.LeftArrow)) {
-			newVel.x -= (moveForce/2);
+			newVel.x -= (moveForce/3);
 			rigidbody.velocity = newVel;
 			facing = "L";
 		}
 
 		if(Input.GetKey(KeyCode.RightArrow)) {
-			newVel.x += (moveForce/2);
+			newVel.x += (moveForce/3);
 			rigidbody.velocity = newVel;
 			facing = "R";
 		}
@@ -97,14 +103,22 @@ public class Player : MonoBehaviour {
 			Transform shurikenClone = Instantiate(shuriken, transform.position, transform.rotation) as Transform;
 			//Ignore the thrower
 			Physics.IgnoreCollision(shurikenClone.collider, collider);
-			Vector3 power = -shurikenClone.transform.right * throwForce;
+			Vector3 horizontalPower = shurikenClone.transform.right * throwForce;
+			Vector3 verticalPower = shurikenClone.transform.up * throwForce;
 
-			if(facing == "L") {
-				shurikenClone.rigidbody.AddForce(power);
-				print(power);
-
-			} else if (facing == "R"){
-				shurikenClone.rigidbody.AddForce(-power);
+			if(Input.GetKey(KeyCode.UpArrow)) {
+				shurikenClone.rotation = new Quaternion(0,0,1f,1);
+				print(shurikenClone.rotation);
+				shurikenClone.rigidbody.AddForce(verticalPower);
+			} else if(Input.GetKey(KeyCode.DownArrow)) {
+				shurikenClone.rotation = new Quaternion(0,0,-1f,1);
+				shurikenClone.rigidbody.AddForce(-verticalPower);
+			} else {
+				if(facing == "L") {
+					shurikenClone.rigidbody.AddForce(-horizontalPower);
+				} else if(facing == "R"){
+					shurikenClone.rigidbody.AddForce(horizontalPower);
+				}
 			}
 		}
 
